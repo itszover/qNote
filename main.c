@@ -29,8 +29,12 @@ char *readline(void) {
   return buffer;
 }
 
-int main() {
+int main(int argc, char **argv) {
   printf(">>>\n");
   char *line = readline();
-  printf("%s", line);
+
+  FILE *fp = fopen("output.txt", "w");
+
+  fputs(line, fp);
+  fclose(fp);
 }
