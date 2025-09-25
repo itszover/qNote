@@ -6,9 +6,6 @@ char *readline(void) {
   size_t cap = 16;
   size_t length = 0;
   char *buffer = malloc(cap);
-
-  if (buffer == NULL) return NULL;
-
   int c;
 
   while ((c = getchar()) != EOF && c != '\n') {
