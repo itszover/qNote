@@ -37,6 +37,31 @@ char *readline(void)
 
 int main(int argc, char **argv)
 {
+  FILE *f = fopen(".config", "r");
+  char tmp[256];
+
+  while (fgets(tmp, sizeof(tmp), f))
+  {
+    tmp[strcspn(tmp, "\n")] = '\0';
+
+    char *space = strchr(tmp, ' ');
+    size_t prop_len = space - tmp;
+    size_t val_len = strlen(space + 1);
+    char *property = malloc(prop_len + 1);
+    char *value = malloc(val_len + 1);
+
+    memcpy(property, tmp, prop_len);
+    property[prop_len] = '\0';
+    strcpy(value, space + 1);
+
+    printf("Property: %s\n", property);
+    printf("Value: %s\n", value);
+
+    free(property);
+    free(value);
+  }
+
+  fclose(f);
   for (int i = 1; i < argc; i++)
   {
     if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--read") == 0)
