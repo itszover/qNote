@@ -71,12 +71,6 @@ void read_page(int page_number)
 
   FILE *f = fopen(filename, "r");
 
-  if (f == NULL)
-  {
-    perror("Error opening file");
-    return;
-  }
-
   int c;
   while ((c = fgetc(f)) != EOF)
   {
@@ -124,6 +118,7 @@ int main(int argc, char **argv)
       return EXIT_SUCCESS;
     }
   }
+  
   write_page(last_page);
 
   return EXIT_SUCCESS;
