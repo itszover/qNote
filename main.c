@@ -11,6 +11,7 @@
 
 const size_t MAX_BUFFER = 256;
 const size_t MAX_FILENAME = 32;
+const char PAGE_FORMAT[] = "p%d.txt";
 
 int find_last_page()
 {
@@ -28,7 +29,7 @@ int find_last_page()
   do
   {
     int num;
-    if (sscanf(findFileData.cFileName, "p%d.txt", &num) == 1)
+    if (sscanf(findFileData.cFileName, PAGE_FORMAT, &num) == 1)
     {
       if (num > last_page)
         last_page = num;
@@ -44,7 +45,7 @@ int find_last_page()
   while ((entry = readdir(d)) != NULL)
   {
     int num;
-    if (sscanf(entry->d_name, "p%d.txt", &num) == 1)
+    if (sscanf(entry->d_name, PAGE_FORMAT, &num) == 1)
     {
       if (num > last_page)
         last_page = num;
@@ -60,7 +61,7 @@ int find_last_page()
 void create_new_page(int last_page)
 {
   char filename[MAX_FILENAME];
-  sprintf(filename, "p%d.txt", last_page + 1);
+  sprintf(filename, PAGE_FORMAT, last_page + 1);
 
   FILE *f = fopen(filename, "w");
 
@@ -70,7 +71,7 @@ void create_new_page(int last_page)
 void read_page(int page_number)
 {
   char filename[MAX_FILENAME];
-  sprintf(filename, "p%d.txt", page_number);
+  sprintf(filename, PAGE_FORMAT, page_number);
 
   FILE *f = fopen(filename, "r");
 
@@ -86,7 +87,7 @@ void read_page(int page_number)
 void write_page(int page_number)
 {
   char filename[MAX_FILENAME];
-  sprintf(filename, "p%d.txt", page_number);
+  sprintf(filename, PAGE_FORMAT, page_number);
 
   FILE *f = fopen(filename, "a");
   
