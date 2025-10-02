@@ -1,4 +1,4 @@
-CLEANFILES = *.exe *.txt
+CLEANFILES = *.exe *.txt *.o
 
 SRC = main.c
 OBJ = $(SRC:.c=.o)
