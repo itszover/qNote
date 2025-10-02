@@ -98,23 +98,26 @@ void write_page(int page_number)
 
 int main(int argc, char **argv)
 {
-  int lp = find_last_page();
+  int last_page = find_last_page();
 
   for (int i = 1; i < argc; i++)
   {
     if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--read") == 0)
     {
-      read_page(lp);
-      exit(EXIT_SUCCESS);
+      int page = atoi(argv[i + 1]) > last_page ? last_page : atoi(argv[i + 1]);
+      read_page(page);
+      
+      return EXIT_SUCCESS;
     }
 
     if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "--new") == 0)
     {
-      create_new_page(lp);
-      exit(EXIT_SUCCESS);
+      create_new_page(last_page);
+
+      return EXIT_SUCCESS;
     }
   }
-  write_page(lp);
+  write_page(last_page);
 
   return EXIT_SUCCESS;
 }
