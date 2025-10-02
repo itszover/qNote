@@ -9,6 +9,9 @@
 #include <dirent.h>
 #endif
 
+const size_t MAX_BUFFER = 256;
+const size_t MAX_FILENAME = 32;
+
 int find_last_page()
 {
   int last_page = 0;
@@ -56,7 +59,7 @@ int find_last_page()
 
 void create_new_page(int last_page)
 {
-  char filename[7];
+  char filename[MAX_FILENAME];
   sprintf(filename, "p%d.txt", last_page + 1);
 
   FILE *f = fopen(filename, "w");
@@ -66,7 +69,7 @@ void create_new_page(int last_page)
 
 void read_page(int page_number)
 {
-  char filename[7];
+  char filename[MAX_FILENAME];
   sprintf(filename, "p%d.txt", page_number);
 
   FILE *f = fopen(filename, "r");
@@ -88,8 +91,8 @@ void write_page(int page_number)
   FILE *f = fopen(filename, "a");
   
   printf("#\n");
-  
-  char buffer[256];
+
+  char buffer[MAX_BUFFER];
   fgets(buffer, sizeof(buffer), stdin);
   
   fprintf(f, "%s\n", buffer);
@@ -104,7 +107,17 @@ int main(int argc, char **argv)
   {
     if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--read") == 0)
     {
-      int input = atoi(argv[i + 1]);
+      int input;
+
+      if (i + 1 >= argc)
+      {
+        input = last_page;
+      }
+      else
+      {
+        input = atoi(argv[i + 1]);
+      }
+
       int page = input > last_page ? last_page : input;
 
       read_page(page);
