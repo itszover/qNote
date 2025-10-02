@@ -103,8 +103,8 @@ int main(int argc, char **argv)
   printf(">>>\n");
 
   char *line = readline();
-  FILE *f = fopen("output.txt", "a");
+  FILE *j = fopen("output.txt", "a");
 
-  fprintf(f, "%s\n", line);
-  fclose(f);
+  fprintf(j, "%s\n", line);
+  fclose(j);
 }
