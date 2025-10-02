@@ -1,4 +1,4 @@
 CLEANFILES = *.exe *.txt
 
-clean:
-	rm -f $(CLEANFILES)
+clear:
+	rm -f $(CLEANFILES) || del $(CLEANFILES)
