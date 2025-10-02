@@ -82,12 +82,23 @@ void read_page(int page_number)
   }
 }
 
+void write_page(int page_number)
+{
+  char filename[7];
+  sprintf(filename, "p%d.txt", page_number);
+  printf(">>>\n");
+
+  char buffer[256];
+  fgets(buffer, sizeof(buffer), stdin);
+  FILE *j = fopen(filename, "a");
+
+  fprintf(j, "%s\n", buffer);
+  fclose(j);
+}
+
 int main(int argc, char **argv)
 {
-
   int lp = find_last_page();
-
-  printf("Config Value: %d\n", lp);
 
   for (int i = 1; i < argc; i++)
   {
@@ -103,13 +114,7 @@ int main(int argc, char **argv)
       exit(EXIT_SUCCESS);
     }
   }
+  write_page(lp);
 
-  printf(">>>\n");
-
-  char buffer[256];
-  fgets(buffer, sizeof(buffer), stdin);
-  FILE *j = fopen("p0.txt", "a");
-
-  fprintf(j, "%s\n", buffer);
-  fclose(j);
+  return EXIT_SUCCESS;
 }
