@@ -3,108 +3,113 @@
 #include <stdint.h>
 #include <string.h>
 
-char *readline(void)
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <dirent.h>
+#endif
+
+int find_last_page()
 {
-  size_t cap = 16;
-  size_t length = 0;
-  char *buffer = malloc(cap);
-  int c;
+  int last_page = 0;
 
-  while ((c = getchar()) != EOF && c != '\n')
+#ifdef _WIN32
+  WIN32_FIND_DATA findFileData;
+  HANDLE hFind = FindFirstFile("p*.txt", &findFileData);
+
+  if (hFind == INVALID_HANDLE_VALUE)
   {
-    if (length + 1 >= cap)
+    return 0; // nenhum arquivo encontrado
+  }
+
+  do
+  {
+    int num;
+    if (sscanf(findFileData.cFileName, "p%d.txt", &num) == 1)
     {
-      if (cap > SIZE_MAX / 2)
-      {
-        free(buffer);
-        return NULL;
-      }
-      // double the memory cap
-      buffer = realloc(buffer, cap *= 2);
+      if (num > last_page)
+        last_page = num;
     }
-    buffer[length++] = (char)c;
-  }
+  } while (FindNextFile(hFind, &findFileData));
 
-  if (c == EOF && length == 0)
+  FindClose(hFind);
+
+#else
+  DIR *d = opendir(".");
+
+  struct dirent *entry;
+  while ((entry = readdir(d)) != NULL)
   {
-    free(buffer);
-    return NULL;
+    int num;
+    if (sscanf(entry->d_name, "p%d.txt", &num) == 1)
+    {
+      if (num > last_page)
+        last_page = num;
+    }
   }
 
-  buffer[length] = '\0';
-  return buffer;
+  closedir(d);
+#endif
+
+  return last_page;
+}
+
+void create_new_page(int last_page)
+{
+  char filename[7];
+  sprintf(filename, "p%d.txt", last_page + 1);
+
+  FILE *f = fopen(filename, "w");
+}
+
+void read_page(int page_number)
+{
+  char filename[7];
+  sprintf(filename, "p%d.txt", page_number);
+
+  FILE *f = fopen(filename, "r");
+
+  if (f == NULL)
+  {
+    perror("Error opening file");
+    return;
+  }
+
+  int c;
+  while ((c = fgetc(f)) != EOF)
+  {
+    putchar(c);
+  }
 }
 
 int main(int argc, char **argv)
 {
-  FILE *f = fopen(".config", "r");
-  char tmp[256];
 
-  while (fgets(tmp, sizeof(tmp), f))
-  {
-    tmp[strcspn(tmp, "\n")] = '\0';
+  int lp = find_last_page();
 
-    char *space = strchr(tmp, ' ');
-    size_t prop_len = space - tmp;
-    size_t val_len = strlen(space + 1);
-    char *property = malloc(prop_len + 1);
-    char *value = malloc(val_len + 1);
+  printf("Config Value: %d\n", lp);
 
-    memcpy(property, tmp, prop_len);
-    property[prop_len] = '\0';
-    strcpy(value, space + 1);
-
-    printf("Property: %s\n", property);
-    printf("Value: %s\n", value);
-
-    free(property);
-    free(value);
-  }
-
-  fclose(f);
   for (int i = 1; i < argc; i++)
   {
     if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--read") == 0)
     {
-      FILE *f = fopen("p0.txt", "r");
-      int c;
-      while ((c = fgetc(f)) != EOF)
-      {
-        putchar(c);
-      }
+      read_page(lp);
       exit(EXIT_SUCCESS);
     }
 
     if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "--new") == 0)
     {
-      char filename[7];
-
-      for (int i = 0; i < 1000; i++)
-      {
-        sprintf(filename, "p%d.txt", i);
-        FILE *f = fopen(filename, "r");
-        if (f == NULL)
-        {
-          printf("Creating new file: %s\ni=%d\n", filename, i);
-          sprintf(filename, "p%d.txt", i);
-          FILE *s = fopen(filename, "w");
-          printf(">>>\n");
-          char *line = readline();
-          fprintf(s, "%s\n", line);
-          fclose(f);
-          exit(EXIT_SUCCESS);
-        }
-        fclose(f);
-      }
+      create_new_page(lp);
       exit(EXIT_SUCCESS);
     }
   }
 
   printf(">>>\n");
 
-  char *line = readline();
-  FILE *j = fopen("output.txt", "a");
+  char buffer[256];
+  fgets(buffer, sizeof(buffer), stdin);
+  FILE *j = fopen("p0.txt", "a");
 
-  fprintf(j, "%s\n", line);
+  fprintf(j, "%s\n", buffer);
   fclose(j);
 }
