@@ -60,6 +60,8 @@ void create_new_page(int last_page)
   sprintf(filename, "p%d.txt", last_page + 1);
 
   FILE *f = fopen(filename, "w");
+
+  fclose(f);
 }
 
 void read_page(int page_number)
@@ -80,20 +82,25 @@ void read_page(int page_number)
   {
     putchar(c);
   }
+
+  fclose(f);
 }
 
 void write_page(int page_number)
 {
   char filename[7];
-  sprintf(filename, "p%d.txt", page_number);
-  printf(">>>\n");
-
   char buffer[256];
-  fgets(buffer, sizeof(buffer), stdin);
-  FILE *j = fopen(filename, "a");
 
-  fprintf(j, "%s\n", buffer);
-  fclose(j);
+  FILE *f = fopen(filename, "a");
+  
+  sprintf(filename, "p%d.txt", page_number);
+  
+  printf("#\n");
+
+  fgets(buffer, sizeof(buffer), stdin);
+  
+  fprintf(f, "%s\n", buffer);
+  fclose(f);
 }
 
 int main(int argc, char **argv)
