@@ -85,7 +85,7 @@ void read_page(int page_number)
 
 void write_page(int page_number)
 {
-  char filename[7];
+  char filename[MAX_FILENAME];
   sprintf(filename, "p%d.txt", page_number);
 
   FILE *f = fopen(filename, "a");
