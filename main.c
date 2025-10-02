@@ -83,14 +83,13 @@ void read_page(int page_number)
 void write_page(int page_number)
 {
   char filename[7];
-  char buffer[256];
+  sprintf(filename, "p%d.txt", page_number);
 
   FILE *f = fopen(filename, "a");
   
-  sprintf(filename, "p%d.txt", page_number);
-  
   printf("#\n");
-
+  
+  char buffer[256];
   fgets(buffer, sizeof(buffer), stdin);
   
   fprintf(f, "%s\n", buffer);
@@ -105,7 +104,9 @@ int main(int argc, char **argv)
   {
     if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--read") == 0)
     {
-      int page = atoi(argv[i + 1]) > last_page ? last_page : atoi(argv[i + 1]);
+      int input = atoi(argv[i + 1]);
+      int page = input > last_page ? last_page : input;
+
       read_page(page);
       
       return EXIT_SUCCESS;
