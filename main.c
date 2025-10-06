@@ -9,9 +9,9 @@
 #include <dirent.h>
 #endif
 
-const size_t MAX_BUFFER = 256;
-const size_t MAX_FILENAME = 32;
-const char PAGE_FORMAT[] = "p%d.txt";
+const size_t MAX_BUFFER_SIZE = 256;
+const size_t MAX_FILENAME_SIZE = 32;
+const char PAGE_FORMAT[] = "%d.txt";
 
 int find_last_page()
 {
@@ -19,7 +19,7 @@ int find_last_page()
 
 #ifdef _WIN32
   WIN32_FIND_DATA findFileData;
-  HANDLE hFind = FindFirstFile("p*.txt", &findFileData);
+  HANDLE hFind = FindFirstFile("*.txt", &findFileData);
 
   if (hFind == INVALID_HANDLE_VALUE)
   {
@@ -60,7 +60,7 @@ int find_last_page()
 
 void create_new_page(int last_page)
 {
-  char filename[MAX_FILENAME];
+  char filename[MAX_FILENAME_SIZE];
   sprintf(filename, PAGE_FORMAT, last_page + 1);
 
   FILE *f = fopen(filename, "w");
@@ -70,7 +70,7 @@ void create_new_page(int last_page)
 
 void read_page(int page_number)
 {
-  char filename[MAX_FILENAME];
+  char filename[MAX_FILENAME_SIZE];
   sprintf(filename, PAGE_FORMAT, page_number);
 
   FILE *f = fopen(filename, "r");
@@ -86,14 +86,14 @@ void read_page(int page_number)
 
 void write_page(int page_number)
 {
-  char filename[MAX_FILENAME];
+  char filename[MAX_FILENAME_SIZE];
   sprintf(filename, PAGE_FORMAT, page_number);
 
   FILE *f = fopen(filename, "a");
   
   printf("#\n");
 
-  char buffer[MAX_BUFFER];
+  char buffer[MAX_BUFFER_SIZE];
   fgets(buffer, sizeof(buffer), stdin);
   
   fprintf(f, "%s\n", buffer);
