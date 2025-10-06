@@ -23,7 +23,7 @@ int find_last_page()
 
   if (hFind == INVALID_HANDLE_VALUE)
   {
-    return 0; // nenhum arquivo encontrado
+    return 0; // no file found
   }
 
   do
